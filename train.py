@@ -8,6 +8,13 @@ from sklearn.model_selection import train_test_split
 DATA = 'data/Dry_Eye_Dataset.csv'
 TARGET = 'dry_eye_disease'
 SYMPTOMS = ['discomfort_eye_strain', 'redness_in_eye', 'itchiness_irritation_in_eye']
+FEATURES = ['any_symptom']
+
+
+def add_features(df):
+    df = df.copy()
+    df['any_symptom'] = (df[SYMPTOMS].sum(axis=1) > 0).astype(int)
+    return df
 
 
 def load_data(path=DATA):
@@ -18,7 +25,7 @@ def load_data(path=DATA):
                   .str.replace(' ', '_', regex=False))
     for c in SYMPTOMS + [TARGET]:
         df[c] = (df[c] == 'Y').astype(int)
-    return df[SYMPTOMS + [TARGET]]
+    return add_features(df[SYMPTOMS + [TARGET]])
 
 
 def main():
@@ -28,9 +35,9 @@ def main():
     df_full_train, df_test = train_test_split(df, test_size=0.2, random_state=1)
 
     model = LogisticRegression(C=1.0, max_iter=1000)
-    model.fit(df_full_train[SYMPTOMS], df_full_train[TARGET])
+    model.fit(df_full_train[FEATURES], df_full_train[TARGET])
 
-    auc = roc_auc_score(df_test[TARGET], model.predict_proba(df_test[SYMPTOMS])[:, 1])
+    auc = roc_auc_score(df_test[TARGET], model.predict_proba(df_test[FEATURES])[:, 1])
     print(f'test ROC AUC: {auc:.3f}')
 
     with open('model.bin', 'wb') as f_out:

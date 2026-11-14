@@ -32,6 +32,7 @@ def health():
 
 @app.post('/predict')
 def predict(patient: Patient) -> Prediction:
-    X = pd.DataFrame([patient.model_dump()])[SYMPTOMS]
+    data = patient.model_dump()
+    X = pd.DataFrame([{'any_symptom': int(sum(data[c] for c in SYMPTOMS) > 0)}])
     prob = float(model.predict_proba(X)[0, 1])
     return Prediction(dry_eye_probability=prob, dry_eye=prob >= 0.5)
