@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dry-eye
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dry-eye
+  template:
+    metadata:
+      labels:
+        app: dry-eye
+    spec:
+      containers:
+        - name: dry-eye
+          image: dry-eye-prediction:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 9696
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9696
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
