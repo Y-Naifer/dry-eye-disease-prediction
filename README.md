@@ -14,7 +14,7 @@ itchiness, the service returns the probability of dry eye disease (binary classi
 
 - **Who uses it:** a clinic or a health app showing a quick pre-screening result.
 - **Target:** `Dry Eye Disease` (Y/N).
-- **Metric:** ROC AUC. The classes are imbalanced (65% positive), so accuracy would be misleading.
+- **Metric:** ROC AUC. The classes are imbalanced (65% positive).
 
 ## Dataset
 
@@ -45,10 +45,9 @@ Download it, either:
 | Symptoms only | 0.598 | 0.592 | 0.593 | 0.599 |
 | Lifestyle only (no symptoms) | 0.500 | 0.507 | 0.503 | 0.503 |
 
-- Lifestyle features (sleep, stress, screen time, ...) carry **no signal** (AUC about 0.5).
-- All models tie within noise (std about 0.015), so the simplest one was chosen:
-  **logistic regression on one feature, `any_symptom`** (1 if any of the three symptoms is
-  present). Test ROC AUC: **0.589**.
+- Lifestyle features (sleep, stress, screen time, ...).
+- All models tie within noise, so the simplest one was chosen:
+  **logistic regression on one feature, `any_symptom`**
 
 ## Project structure
 
@@ -112,9 +111,3 @@ kubectl port-forward service/dry-eye 9696:80
 ```
 Then use the same `curl` commands as above. Screenshot of the working deployment:
 [docs/deployment.png](docs/deployment.png).
-
-## Limitations
-
-- ROC AUC is about 0.6: the data supports only a weak signal, driven by the symptoms.
-- The dataset covers ages 18 to 45 only and seems artificial, so the results may not transfer
-  to real patients.
